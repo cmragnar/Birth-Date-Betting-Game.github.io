@@ -189,35 +189,10 @@
             </div>
         </div>
         
+        <div id="loadStatus" style="margin-bottom: 20px; text-align: center; font-weight: bold;"></div>
+        
         <div class="participants" id="participants">
-            <div class="participant" data-index="0">
-                <div class="rank">1</div>
-                <input type="text" placeholder="Enter participant name" class="name-input">
-                <input type="datetime-local" class="guess-input">
-                <input type="datetime-local" class="guess-input" style="display:none;">
-                <div class="difference">Enter guess</div>
-            </div>
-            <div class="participant" data-index="1">
-                <div class="rank">2</div>
-                <input type="text" placeholder="Enter participant name" class="name-input">
-                <input type="datetime-local" class="guess-input">
-                <input type="datetime-local" class="guess-input" style="display:none;">
-                <div class="difference">Enter guess</div>
-            </div>
-            <div class="participant" data-index="2">
-                <div class="rank">3</div>
-                <input type="text" placeholder="Enter participant name" class="name-input">
-                <input type="datetime-local" class="guess-input">
-                <input type="datetime-local" class="guess-input" style="display:none;">
-                <div class="difference">Enter guess</div>
-            </div>
-            <div class="participant" data-index="3">
-                <div class="rank">4</div>
-                <input type="text" placeholder="Enter participant name" class="name-input">
-                <input type="datetime-local" class="guess-input">
-                <input type="datetime-local" class="guess-input" style="display:none;">
-                <div class="difference">Enter guess</div>
-            </div>
+            <!-- Participants will be loaded from data.txt -->
         </div>
     </div>
 
@@ -302,21 +277,71 @@
             });
         }
 
+        // Load data from text file
+        async function loadParticipantData() {
+            const statusDiv = document.getElementById('loadStatus');
+            statusDiv.textContent = 'Loading...';
+            statusDiv.style.color = '#667eea';
+            
+            try {
+                const response = await fetch('data.txt');
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                
+                const text = await response.text();
+                const lines = text.trim().split('\n');
+                
+                // Clear existing participants
+                const container = document.getElementById('participants');
+                container.innerHTML = '';
+                
+                // Parse and create participants
+                lines.forEach((line, index) => {
+                    const parts = line.split(',');
+                    if (parts.length >= 2) {
+                        const name = parts[0].trim();
+                        const dateTime = parts[1].trim();
+                        
+                        // Create participant element
+                        const participant = document.createElement('div');
+                        participant.className = 'participant';
+                        participant.setAttribute('data-index', index);
+                        
+                        participant.innerHTML = `
+                            <div class="rank">${index + 1}</div>
+                            <input type="text" value="${name}" class="name-input" readonly>
+                            <input type="datetime-local" value="${dateTime}" class="guess-input" readonly>
+                            <input type="datetime-local" class="guess-input" style="display:none;">
+                            <div class="difference">Loaded</div>
+                        `;
+                        
+                        container.appendChild(participant);
+                    }
+                });
+                
+                statusDiv.textContent = `Loaded ${lines.length} participants successfully!`;
+                statusDiv.style.color = '#10b981';
+                
+                // Sort participants after loading
+                sortParticipants();
+                
+            } catch (error) {
+                statusDiv.textContent = 'Error: Could not load data.txt file. Make sure it exists in the same folder.';
+                statusDiv.style.color = '#ef4444';
+                console.error('Error loading data:', error);
+            }
+        }
+
         // Event listeners
         document.getElementById('birthDate').addEventListener('input', sortParticipants);
-        
-        document.querySelectorAll('.guess-input').forEach(input => {
-            input.addEventListener('input', sortParticipants);
-        });
         
         // Initialize
         updateCurrentDate();
         setInterval(updateCurrentDate, 60000); // Update every minute
         
-        // Set default reference to current time for initial sorting
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        sortParticipants();
+        // Auto-load data on page load
+        loadParticipantData();
     </script>
 </body>
 </html>
