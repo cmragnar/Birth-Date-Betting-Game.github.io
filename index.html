@@ -321,39 +321,32 @@
 
         // Beer rain animation
         function createBeerRain() {
+            console.log('Beer rain started!'); // Debug message
+            
             const beerContainer = document.createElement('div');
             beerContainer.className = 'beer-rain';
             document.body.appendChild(beerContainer);
             
-            const beerEmojis = ['🍺', '🍻', '🍺', '🍻', '🍺', '🍻'];
-            const numberOfBeers = 50;
+            const beerEmojis = ['🍺', '🍻'];
+            const numberOfBeers = 30;
             
             for (let i = 0; i < numberOfBeers; i++) {
-                setTimeout(() => {
-                    const beer = document.createElement('div');
-                    beer.className = 'beer';
-                    beer.textContent = beerEmojis[Math.floor(Math.random() * beerEmojis.length)];
-                    beer.style.left = Math.random() * 100 + '%';
-                    beer.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    beer.style.animationDelay = Math.random() * 2 + 's';
-                    
-                    beerContainer.appendChild(beer);
-                    
-                    // Remove beer after animation
-                    setTimeout(() => {
-                        if (beer.parentNode) {
-                            beer.parentNode.removeChild(beer);
-                        }
-                    }, 8000);
-                }, i * 100);
+                const beer = document.createElement('div');
+                beer.className = 'beer';
+                beer.textContent = beerEmojis[Math.floor(Math.random() * beerEmojis.length)];
+                beer.style.left = Math.random() * 100 + '%';
+                beer.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                beer.style.animationDelay = (Math.random() * 3) + 's';
+                
+                beerContainer.appendChild(beer);
             }
             
-            // Remove container after all animations
+            // Remove container after animations complete
             setTimeout(() => {
-                if (beerContainer.parentNode) {
+                if (beerContainer && beerContainer.parentNode) {
                     beerContainer.parentNode.removeChild(beerContainer);
                 }
-            }, 15000);
+            }, 8000);
         }
 
         // Load data from text file
@@ -414,6 +407,7 @@
 
         // Event listeners
         document.getElementById('birthDate').addEventListener('input', sortParticipants);
+        document.getElementById('beerRainBtn').addEventListener('click', createBeerRain);
         
         // Initialize
         updateCurrentDate();
