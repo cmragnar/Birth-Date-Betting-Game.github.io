@@ -814,9 +814,26 @@
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
-                second: '2-digit'
+                second: '2-digit',
+                hour12: false // Use 24-hour format to match datetime-local
             };
-            document.getElementById('currentDate').textContent = '🍺 ' + now.toLocaleDateString('en-US', options) + ' 🍻';
+            
+            // Format for display (with AM/PM for readability)
+            const displayOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            
+            const displayTime = now.toLocaleDateString('en-US', displayOptions);
+            const isoTime = now.toISOString().slice(0, 16); // Format for datetime-local
+            
+            document.getElementById('currentDate').innerHTML = `🍺 ${displayTime} 🍻<br><small style="font-size: 0.8em; opacity: 0.8;">(${isoTime.replace('T', ' at ')})</small>`;
         }
 
         // Calculate time difference in a readable format
@@ -860,13 +877,29 @@
             const container = document.getElementById('participants');
             const participants = Array.from(container.children);
             const birthDate = document.getElementById('birthDate').value;
-            const referenceDate = birthDate || new Date().toISOString().slice(0, 16);
+            
+            // Use current time in local timezone if no birth date is set
+            let referenceDate;
+            if (birthDate) {
+                referenceDate = birthDate;
+            } else {
+                const now = new Date();
+                // Convert to local datetime-local format (YYYY-MM-DDTHH:MM)
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                referenceDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+            
+            console.log('Using reference date:', referenceDate);
             
             // Calculate differences and sort
             const participantsWithDiff = participants.map(participant => {
                 const guessInput = participant.querySelector('.participant-date');
                 const guess = guessInput.value;
-                const diffMs = guess ? Math.abs(new Date(guess) - new Date(referenceDate)) : Infinity;
+                const diffMs = guess ? Math.abs(new Date(guess).getTime() - new Date(referenceDate).getTime()) : Infinity;
                 return { element: participant, difference: diffMs, guess: guess };
             });
             
