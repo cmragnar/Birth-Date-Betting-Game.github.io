@@ -290,13 +290,17 @@
             backdrop-filter: blur(20px);
             border: 3px solid rgba(255, 193, 7, 0.7);
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px 20px;
             text-align: center;
             box-shadow: 
                 0 20px 40px rgba(0,0,0,0.3),
                 0 0 50px rgba(255, 193, 7, 0.2);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .info-card::before {
@@ -323,9 +327,12 @@
         }
         
         .current-date {
-            font-size: 1.3em;
+            font-size: 1em;
             color: #ffffff;
             font-weight: 600;
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .birth-input {
