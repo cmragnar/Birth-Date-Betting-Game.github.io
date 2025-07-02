@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍺 ULTIMATE BEER APOCALYPSE BET TRACKER 9000 🍻</title>
+    <title>🍺 BEER BET TRACKER 🍻</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Bungee:wght@400&family=Open+Sans:wght@400;600;700&display=swap');
         
@@ -708,7 +708,7 @@
     
     <div class="container">
         <div class="header">
-            <h1 class="main-title">🍺 ULTIMATE BEER APOCALYPSE BET TRACKER 9000 🍻</h1>
+            <h1 class="main-title">🍺 BEER BET TRACKER 🍻</h1>
             <div class="subtitle">🍻 WHO'S BUYING THE ENTIRE BREWERY?! 🍺</div>
             <div class="beer-stakes">
                 🎯 LOSER BUYS FIRST ROUND! 🍺🍻🍺
@@ -823,15 +823,21 @@
         function calculateDifference(guess, reference) {
             if (!guess || !reference) return '🍺 Enter guess! 🍻';
             
-            const guessTime = new Date(guess);
-            const refTime = new Date(reference);
+            // Parse as local datetime-local values (no timezone conversion)
+            const guessTime = new Date(guess + ':00'); // Add seconds if missing
+            const refTime = new Date(reference + ':00'); // Add seconds if missing
             
-            // Fix timezone issue by comparing in local timezone
+            console.log('Guess time:', guess, '-> Parsed:', guessTime);
+            console.log('Reference time:', reference, '-> Parsed:', refTime);
+            
             const diffMs = Math.abs(guessTime.getTime() - refTime.getTime());
+            console.log('Difference in ms:', diffMs);
             
             const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
             const hours = Math.floor((diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
             const minutes = Math.floor((diffMs % (60 * 60 * 1000)) / (60 * 1000));
+            
+            console.log('Calculated difference:', days, 'days', hours, 'hours', minutes, 'minutes');
             
             // Handle exact matches
             if (diffMs === 0) {
